@@ -35,6 +35,8 @@ router.post(
         state,
         city,
         map,
+        categoryId,
+        subcategoryId,
         paymentStatus,
         paidAmount,
         subscriptionType,
@@ -50,7 +52,9 @@ router.post(
         !addressLine ||
         !pincode ||
         !state ||
-        !city
+        !city ||
+        !categoryId ||
+        !subcategoryId
       ) {
         return res
           .status(400)
@@ -71,6 +75,8 @@ router.post(
         pincode,
         state,
         city,
+        categoryId,
+        subcategoryId,
         map: map || "",
         paymentStatus: paymentStatus || "pending",
         paidAmount: paidAmount ? Number(paidAmount) : 0,
@@ -98,9 +104,13 @@ router.post(
 // Get all listings for logged-in user
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const listings = await Listing.find({ userId: req.user.id }).sort({
-      createdAt: -1,
-    });
+    const listings = await Listing.find({ userId: req.user.id })
+      .sort({ createdAt: -1 })
+      .populate("state", "name")
+      .populate("city", "name")
+      .populate("categoryId", "name")
+      .populate("subcategoryId", "name");
+    console.log(listings, "listings in api");
     res.json({ listings });
   } catch (error) {
     console.error("Error fetching listings:", error);

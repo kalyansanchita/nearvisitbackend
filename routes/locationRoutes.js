@@ -233,4 +233,32 @@ router.delete("/subcategories/:id", authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/location/cities/state/:stateId
+router.get("/cities/state/:stateId", authenticateToken, async (req, res) => {
+  try {
+    const cities = await City.find({ stateId: req.params.stateId });
+    res.json(cities);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to load cities" });
+  }
+});
+
+// GET /api/location/subcategories/category/:categoryId
+router.get(
+  "/subcategories/category/:categoryId",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const subs = await Subcategory.find({
+        categoryId: req.params.categoryId,
+      });
+      res.json(subs);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Failed to load subcategories" });
+    }
+  }
+);
+
 module.exports = router;
